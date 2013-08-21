@@ -1,5 +1,5 @@
 /* Brandon Ruger
- * Project 2
+ * Project 3
  * VFW 1308 */
 
 window.addEventListener("DOMContentLoaded", function(){
@@ -101,6 +101,7 @@ window.addEventListener("DOMContentLoaded", function(){
         getElements('items').style.display = "block";
         for (var i=0; i<localStorage.length; i++) {
             var createListItem = document.createElement('li');
+            var newLinksLi = document.createElement('li');
             createList.appendChild(createListItem);
             var dataKey = localStorage.key(i);
             var dataValue = localStorage.getItem(dataKey);
@@ -113,9 +114,37 @@ window.addEventListener("DOMContentLoaded", function(){
                 subList.appendChild(makeSublist);
                 var subText = findObject[n][0]+ " " +findObject[n][1];
                 makeSublist.innerHTML = subText;
+                createListItem.appendChild(newLinksLi);
             }
+            createEditDelLinks(localStorage.dataKey(i), newLinksLi); //Create our edit and delete links for each item in local storage.
+            
         }
         
+    }
+    
+    //Function to create edit/delete links for each stored item when displayed.
+    function createEditDelLinks(dataKey, newLinksLi) {
+        //add edit single item link
+        var editLink = document.createElement('a');
+        editLink.href = "#";
+        editLink.key = datakey;
+        var editText = "Edit Reminder";
+        //editLink.addEventListener("click", editItem);
+        editLink.innerHTML = editText;
+        newLinksLi.appendChild(editLink);
+        
+        //add line break
+        var breakTag = document.createElement('br');
+        newLinksLi.appendChild(breakTag);
+        
+        //add delete single item link
+        var deleteLink = document.createElement('a');
+        deleteLink.href = "#";
+        deleteLink.key = dataKey;
+        var deleteText = "Delete Reminder";
+        //deleteLink.addEventListener("click", deleteItem);
+        deleteLink.innerHTML = deleteText;
+        deleteLink.appendChild(deleteLink);
     }
     
     function clearLocalStorage() {
