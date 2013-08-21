@@ -72,9 +72,9 @@ window.addEventListener("DOMContentLoaded", function(){
         var generateId = Math.floor(Math.random()*100000001);
         //Gather up all our form field values and store in an object.
         //Object properties contain array with the form label and input value.
-        //getSelectedCheckedBoxes(); <Create Reminder button will not work unless I deactivate this function.
+        getSelectedCheckedBoxes(); 
         var itemList            = {};
-            itemList.fleaRx     = ["Flea Rx:", getElements('fleaRx').value];
+            itemList.fleaRx     = ["Flea Rx:", getElements('select').value];
             itemList.petname    = ["Pet Name:", getElements('petname').value];
             itemList.petage     = ["Pet Age:", getElements('petage').value];
             itemList.pettype    = ["Pet Type:", getElements('pettype').value];
