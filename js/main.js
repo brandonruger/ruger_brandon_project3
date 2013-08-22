@@ -243,22 +243,15 @@ window.addEventListener("DOMContentLoaded", function(){
             errorMessagesArray.push(nameError);
         }
         
+        
         //Pet Age Validation
-        if (getPetAge.value === "") {
-            var ageError = "Please enter your pet's age.";
+        var re = /^\d{1,2}$/;
+        if (!(re.exec(getPetAge.value))){
+            var ageError = "Please enter your pet's numerical age.";
             getPetAge.style.border = "1px solid red";
             errorMessagesArray.push(ageError);
         }
         
-        /*Regular Expression
-        var re = regular express for number check
-        if (!(re.exect(getPetAge.value))){
-            var ageError = "Please enter your pet's age.";
-            ageError.style.border = "1px solid red";
-            errorMessages.push(ageError);
-        }
-        
-        */
         
         //Pet Type Validation
         if (getPetType.value === ""){
