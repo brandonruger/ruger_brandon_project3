@@ -116,7 +116,7 @@ window.addEventListener("DOMContentLoaded", function(){
                 makeSublist.innerHTML = subText;
                 createListItem.appendChild(newLinksLi);
             }
-            createEditDelLinks(localStorage.dataKey(i), newLinksLi); //Create our edit and delete links for each item in local storage.
+            createEditDelLinks(localStorage.key(i), newLinksLi); //Create our edit and delete links for each item in local storage.
             
         }
         
@@ -129,7 +129,7 @@ window.addEventListener("DOMContentLoaded", function(){
         editLink.href = "#";
         editLink.key = datakey;
         var editText = "Edit Reminder";
-        //editLink.addEventListener("click", editItem);
+        editLink.addEventListener("click", editItem);
         editLink.innerHTML = editText;
         newLinksLi.appendChild(editLink);
         
@@ -147,6 +147,48 @@ window.addEventListener("DOMContentLoaded", function(){
         deleteLink.appendChild(deleteLink);
     }
     
+    function editItem() {
+        //Grab the data from our item from Local Storage.
+        var value = localStorage.getItem(this.key);
+        var obj = JSON.parse(value);
+        
+        //Show the form
+        toHideForm("off");
+        getElements('select').value = itemList.fleaRx[1];
+        getElements('petname').value = itemList.petname[1];
+        getElements('petage').value = itemList.petage[1];
+        getElements('pettype').value = itemList.pettype[1];
+
+        if(obj.fleaValue[1] == "Yes") {
+            getElements('fleaValue').setAttribute("checked", "checked");
+        }
+        
+        if (obj.heartwormValue[1] == "Yes") {
+            getElements('heartwormValue').setAttribute("checked", "checked");
+            
+        }
+        
+        if (obj.otherValue[1] == "Yes") {
+            getElements('otherValue').setAttribute("checked", "checked");
+        }
+                
+        getElements('date').value = itemList.date[1];
+        getElements('range').value = itemList.range[1];
+        getElements('note').value = itemList.note[1];
+        
+        //Remove the initial listener from the imput 'create reminder' button.
+        createButton.removeEventListener("click", submitData);
+        //Change Submit button value to Edit button
+        getElements('button').value = "Edit Reminder";
+        var editSubmit = getElements('button');
+        
+        //Save the key value established in this function as a property of the editSubmit event.
+        //So that we can use that value when we save the data we edited.
+        editSubmit.addEventListener("click", validate);
+        editSubmit.key = this.key;
+        
+    }
+    
     function clearLocalStorage() {
         if (localStorage.length === 0) {
             alert("There is no data to clear.")
@@ -158,12 +200,79 @@ window.addEventListener("DOMContentLoaded", function(){
         }
     }
     
+    function validate(eventData) {
+        //Define the elements we want to check
+        var getPetName = getElements('petname');
+        var getPetAge = getElements('petage');
+        var getPetType = getElements('pettype');
+        
+        //Reset Error Messages
+        errorMsg.innerHTML = "";
+        nameError.style.border = "1px solid black";
+        ageError.style.border = "1px solid black";
+        typeError.style.border = "1px solid black";
+        
+        
+        //Get Error Messages
+        var errorMessages = [];
+        
+        //Pet Name Validation
+        if (getPetName.value === "") {
+            var nameError = "Please enter your pet's name.";
+            nameError.style.border = "1px solid red";
+            errorMessages.push(nameError);
+        }
+        
+        //Pet Age Validation
+        if (getPetAge.value === "") {
+            var ageError = "Please enter your pet's age.";
+            ageError.style.border = "1px solid red";
+            errorMessages.push(ageError);
+        }
+        
+        /*Regular Expression
+        var re = regular express for number check
+        if (!(re.exect(getPetAge.value))){
+            var ageError = "Please enter your pet's age.";
+            ageError.style.border = "1px solid red";
+            errorMessages.push(ageError);
+        }
+        
+        */
+        
+        //Pet Type Validation
+        if (getPetType.value === ""){
+            var typeError = "Please enter your pet's type.";
+            typeError.style.border = "1px solid red";
+            errorMessages.push(typeError);
+        }
+        
+        //If there were errors, display them on screen.
+        if (errorMessages.length >= 1) {
+            for (var i=0, j=errorMessages.length; i<j; i++) {
+                var txt = document.createElement('li');
+                txt.innerHTML = errorMessages[i];
+                errorMsg.appendChild(txt);
+;            }
+            ventData.preventDefault();
+            return false;
+        } else{
+            //If all is OK, save our data!
+            //Send key value which came from edit function.
+            //Remember this key value was passed through the event Listener as a property.
+            submitData(this.key);
+        }
+
+    }
+    
+    
     //Variable Defaults
     var fleaMedication = ["--Type of Flea Medication--", "Topical", "Oral", "Spray-On"];
     var fleaCheckBox;
     var fleaValue;
     var heartwormValue;
     var otherValue;
+    var errorMsg = getElements('errorMessages');
     makeFleaMedOptions();
     
     //Set Link & Submit Click Events
@@ -173,7 +282,7 @@ window.addEventListener("DOMContentLoaded", function(){
     var clearData = getElements('clearData');
     clearData.addEventListener("click", clearLocalStorage);
     var createButton = getElements('button');
-    createButton.addEventListener("click", submitData);
+    createButton.addEventListener("click", validate);
     
     
     
