@@ -68,13 +68,13 @@ window.addEventListener("DOMContentLoaded", function(){
     }
     
     //Create function to submit data.
-    function submitData(dataKey) {
+    function submitData(key) {
         //If there is no key, this means this is a brand new item and we need a new key.
         if (!key) {
             var generateId = Math.floor(Math.random()*100000001);
         }else{
             //Set the id to the existing key we're editing, so it will save over the data.
-            id = dataKey;
+            id = key;
         }
         
         //Gather up all our form field values and store in an object.
@@ -110,8 +110,8 @@ window.addEventListener("DOMContentLoaded", function(){
             var createListItem = document.createElement('li');
             var newLinksLi = document.createElement('li');
             createList.appendChild(createListItem);
-            var dataKey = localStorage.key(i);
-            var dataValue = localStorage.getItem(dataKey);
+            var key = localStorage.key(i);
+            var dataValue = localStorage.getItem(key);
             //Convert string from local storage back to an Object.
             var findObject = JSON.parse(dataValue);
             var subList = document.createElement('ul');
@@ -130,11 +130,11 @@ window.addEventListener("DOMContentLoaded", function(){
     }
     
     //Function to create edit/delete links for each stored item when displayed.
-    function createEditDelLinks(dataKey, newLinksLi) {
+    function createEditDelLinks(key, newLinksLi) {
         //add edit single item link
         var editLink = document.createElement('a');
         editLink.href = "#";
-        editLink.key = datakey;
+        editLink.key = key;
         var editText = "Edit Reminder";
         editLink.addEventListener("click", editItem);
         editLink.innerHTML = editText;
@@ -147,11 +147,11 @@ window.addEventListener("DOMContentLoaded", function(){
         //add delete single item link
         var deleteLink = document.createElement('a');
         deleteLink.href = "#";
-        deleteLink.key = dataKey;
+        deleteLink.key = key;
         var deleteText = "Delete Reminder";
         deleteLink.addEventListener("click", deleteItem);
         deleteLink.innerHTML = deleteText;
-        deleteLink.appendChild(deleteLink);
+        newLinksLi.appendChild(deleteLink);
     }
     
     function editItem() {
@@ -161,27 +161,29 @@ window.addEventListener("DOMContentLoaded", function(){
         
         //Show the form
         toHideForm("off");
-        getElements('select').value = itemList.fleaRx[1];
-        getElements('petname').value = itemList.petname[1];
-        getElements('petage').value = itemList.petage[1];
-        getElements('pettype').value = itemList.pettype[1];
+        
+        //Populate form fields with current localStorage values.
+        getElements('select').value = obj.fleaRx[1];
+        getElements('petname').value = obj.petname[1];
+        getElements('petage').value = obj.petage[1];
+        getElements('pettype').value = obj.pettype[1];
 
-        if(obj.fleaValue[1] == "Yes") {
+        if(obj.flea[1] == "Yes") {
             getElements('fleaValue').setAttribute("checked", "checked");
         }
         
-        if (obj.heartwormValue[1] == "Yes") {
+        if (obj.heartworm[1] == "Yes") {
             getElements('heartwormValue').setAttribute("checked", "checked");
             
         }
         
-        if (obj.otherValue[1] == "Yes") {
+        if (obj.other[1] == "Yes") {
             getElements('otherValue').setAttribute("checked", "checked");
         }
                 
-        getElements('date').value = itemList.date[1];
-        getElements('range').value = itemList.range[1];
-        getElements('note').value = itemList.note[1];
+        getElements('date').value = obj.date[1];
+        getElements('range').value = obj.range[1];
+        getElements('note').value = obj.note[1];
         
         //Remove the initial listener from the imput 'create reminder' button.
         createButton.removeEventListener("click", submitData);
@@ -225,27 +227,27 @@ window.addEventListener("DOMContentLoaded", function(){
         var getPetType = getElements('pettype');
         
         //Reset Error Messages
-        errorMsg.innerHTML = "";
-        nameError.style.border = "1px solid black";
-        ageError.style.border = "1px solid black";
-        typeError.style.border = "1px solid black";
+        //errorMsg.innerHTML = "";
+        getPetName.style.border = "1px solid black";
+        getPetAge.style.border = "1px solid black";
+        getPetType.style.border = "1px solid black";
         
         
         //Get Error Messages
-        var errorMessages = [];
+        var errorMessagesArray = [];
         
         //Pet Name Validation
         if (getPetName.value === "") {
             var nameError = "Please enter your pet's name.";
-            nameError.style.border = "1px solid red";
-            errorMessages.push(nameError);
+            getPetName.style.border = "1px solid red";
+            errorMessagesArray.push(nameError);
         }
         
         //Pet Age Validation
         if (getPetAge.value === "") {
             var ageError = "Please enter your pet's age.";
-            ageError.style.border = "1px solid red";
-            errorMessages.push(ageError);
+            getPetAge.style.border = "1px solid red";
+            errorMessagesArray.push(ageError);
         }
         
         /*Regular Expression
@@ -261,15 +263,15 @@ window.addEventListener("DOMContentLoaded", function(){
         //Pet Type Validation
         if (getPetType.value === ""){
             var typeError = "Please enter your pet's type.";
-            typeError.style.border = "1px solid red";
-            errorMessages.push(typeError);
+            getPetType.style.border = "1px solid red";
+            errorMessagesArray.push(typeError);
         }
         
         //If there were errors, display them on screen.
-        if (errorMessages.length >= 1) {
-            for (var i=0, j=errorMessages.length; i<j; i++) {
+        if (errorMessagesArray.length >= 1) {
+            for (var i=0, j=errorMessagesArray.length; i<j; i++) {
                 var txt = document.createElement('li');
-                txt.innerHTML = errorMessages[i];
+                txt.innerHTML = errorMessagesArray[i];
                 errorMsg.appendChild(txt);
 ;            }
             ventData.preventDefault();
@@ -282,7 +284,6 @@ window.addEventListener("DOMContentLoaded", function(){
         }
 
     }
-    
     
     //Variable Defaults
     var fleaMedication = ["--Type of Flea Medication--", "Topical", "Oral", "Spray-On"];
