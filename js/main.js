@@ -45,7 +45,7 @@ window.addEventListener("DOMContentLoaded", function(){
         } else{
             otherValue = "No"
         };
-    };
+    }
 
     function toHideForm(n) {
         switch (n){
@@ -136,7 +136,7 @@ window.addEventListener("DOMContentLoaded", function(){
         editLink.href = "#";
         editLink.key = key;
         var editText = "Edit Reminder";
-        editLink.addEventListener("click", editItem);
+        editLink.addEventListener("click", editReminder);
         editLink.innerHTML = editText;
         newLinksLi.appendChild(editLink);
         
@@ -149,56 +149,57 @@ window.addEventListener("DOMContentLoaded", function(){
         deleteLink.href = "#";
         deleteLink.key = key;
         var deleteText = "Delete Reminder";
-        deleteLink.addEventListener("click", deleteItem);
+        deleteLink.addEventListener("click", deleteReminder);
         deleteLink.innerHTML = deleteText;
         newLinksLi.appendChild(deleteLink);
     }
     
-    function editItem() {
+    function editReminder() {
         //Grab the data from our item from Local Storage.
-        var value = localStorage.getItem(this.key);
-        var obj = JSON.parse(value);
+        var lsData = localStorage.getItem(this.key);
+        var itemList = JSON.parse(lsData);
         
         //Show the form
         toHideForm("off");
         
         //Populate form fields with current localStorage values.
-        getElements('select').value = obj.fleaRx[1];
-        getElements('petname').value = obj.petname[1];
-        getElements('petage').value = obj.petage[1];
-        getElements('pettype').value = obj.pettype[1];
+        getElements('petname').value = itemList.petname[1];
+        getElements('petage').value = itemList.petage[1];
+        getElements('pettype').value = itemList.pettype[1];
 
-        if(obj.flea[1] == "Yes") {
-            getElements('fleaValue').setAttribute("checked", "checked");
+        if(itemList.flea[1] == "Yes") {
+            getElements('flea').setAttribute("checked", "checked");
         }
         
-        if (obj.heartworm[1] == "Yes") {
-            getElements('heartwormValue').setAttribute("checked", "checked");
+        getElements('select').value = itemList.fleaRx[1];
+        
+        if (itemList.heartworm[1] == "Yes") {
+            getElements('heartworm').setAttribute("checked", "checked");
             
         }
         
-        if (obj.other[1] == "Yes") {
-            getElements('otherValue').setAttribute("checked", "checked");
+        if (itemList.other[1] == "Yes") {
+            getElements('other').setAttribute("checked", "checked");
         }
                 
-        getElements('date').value = obj.date[1];
-        getElements('range').value = obj.range[1];
-        getElements('note').value = obj.note[1];
+        getElements('date').value = itemList.date[1];
+        getElements('range').value = itemList.range[1];
+        getElements('note').value = itemList.note[1];
         
         //Remove the initial listener from the imput 'create reminder' button.
-        createButton.removeEventListener("click", submitData);
+        createButton.removeEventListener("click", validateInput);
         //Change Submit button value to Edit button
-        getElements('button').value = "Edit Reminder";
-        var editSubmit = getElements('button');
+        getElements('button').value = "Update Reminder";
+        var changeButton = getElements('button');
         
         //Save the key value established in this function as a property of the editSubmit event.
         //So that we can use that value when we save the data we edited.
-        editSubmit.addEventListener("click", validate);
-        editSubmit.key = this.key;
+        changeButton.addEventListener("click", validateInput);
+        changeButton.key = this.key;
         
     }
     
-    function deleteItem() {
+    function deleteReminder() {
         var askUser = confirm("Are you sure you want to delete this reminder?");
         if (askUser) {
             localStorage.removeItem(this.key);
@@ -211,7 +212,7 @@ window.addEventListener("DOMContentLoaded", function(){
     
     function clearLocalStorage() {
         if (localStorage.length === 0) {
-            alert("There is no data to clear.")
+            alert("Reminder list is already empty.")
         } else {
             localStorage.clear();
             alert("All Reminders have been deleted!");
@@ -220,14 +221,14 @@ window.addEventListener("DOMContentLoaded", function(){
         }
     }
     
-    function validate(eventData) {
+    function validateInput(eventData) {
         //Define the elements we want to check
         var getPetName = getElements('petname');
         var getPetAge = getElements('petage');
         var getPetType = getElements('pettype');
         
         //Reset Error Messages
-        errMsg.innerHTML = "";
+        error.innerHTML = "";
         getPetName.style.border = "1px solid black";
         getPetAge.style.border = "1px solid black";
         getPetType.style.border = "1px solid black";
@@ -239,7 +240,7 @@ window.addEventListener("DOMContentLoaded", function(){
         //Pet Name Validation
         if (getPetName.value === "") {
             var nameError = "Please enter your pet's name.";
-            getPetName.style.border = "1px solid red";
+            getPetName.style.border = "2px solid red";
             errorMessagesArray.push(nameError);
         }
         
@@ -248,7 +249,7 @@ window.addEventListener("DOMContentLoaded", function(){
         var re = /^\d{1,2}$/;
         if (!(re.exec(getPetAge.value))){
             var ageError = "Please enter your pet's numerical age.";
-            getPetAge.style.border = "1px solid red";
+            getPetAge.style.border = "2px solid red";
             errorMessagesArray.push(ageError);
         }
         
@@ -256,7 +257,7 @@ window.addEventListener("DOMContentLoaded", function(){
         //Pet Type Validation
         if (getPetType.value === ""){
             var typeError = "Please enter your pet's type.";
-            getPetType.style.border = "1px solid red";
+            getPetType.style.border = "2px solid red";
             errorMessagesArray.push(typeError);
         }
         
@@ -265,7 +266,7 @@ window.addEventListener("DOMContentLoaded", function(){
             for (var i=0, j=errorMessagesArray.length; i<j; i++) {
                 var txt = document.createElement('li');
                 txt.innerHTML = errorMessagesArray[i];
-                errMsg.appendChild(txt);
+                error.appendChild(txt);
 ;            }
 
             eventData.preventDefault();
@@ -285,7 +286,7 @@ window.addEventListener("DOMContentLoaded", function(){
     var fleaValue;
     var heartwormValue;
     var otherValue;
-    var errMsg = getElements('errors');
+    var error = getElements('errors');
     makeFleaMedOptions();
     
     //Set Link & Submit Click Events
@@ -295,7 +296,7 @@ window.addEventListener("DOMContentLoaded", function(){
     var clearData = getElements('clearData');
     clearData.addEventListener("click", clearLocalStorage);
     var createButton = getElements('button');
-    createButton.addEventListener("click", validate);
+    createButton.addEventListener("click", validateInput);
     
     
     
