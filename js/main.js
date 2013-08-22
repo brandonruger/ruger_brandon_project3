@@ -68,8 +68,15 @@ window.addEventListener("DOMContentLoaded", function(){
     }
     
     //Create function to submit data.
-    function submitData() {
-        var generateId = Math.floor(Math.random()*100000001);
+    function submitData(dataKey) {
+        //If there is no key, this means this is a brand new item and we need a new key.
+        if (!key) {
+            var generateId = Math.floor(Math.random()*100000001);
+        }else{
+            //Set the id to the existing key we're editing, so it will save over the data.
+            id = dataKey;
+        }
+        
         //Gather up all our form field values and store in an object.
         //Object properties contain array with the form label and input value.
         getSelectedCheckedBoxes(); 
@@ -142,7 +149,7 @@ window.addEventListener("DOMContentLoaded", function(){
         deleteLink.href = "#";
         deleteLink.key = dataKey;
         var deleteText = "Delete Reminder";
-        //deleteLink.addEventListener("click", deleteItem);
+        deleteLink.addEventListener("click", deleteItem);
         deleteLink.innerHTML = deleteText;
         deleteLink.appendChild(deleteLink);
     }
@@ -187,6 +194,17 @@ window.addEventListener("DOMContentLoaded", function(){
         editSubmit.addEventListener("click", validate);
         editSubmit.key = this.key;
         
+    }
+    
+    function deleteItem() {
+        var askUser = confirm("Are you sure you want to delete this reminder?");
+        if (askUser) {
+            localStorage.removeItem(this.key);
+            alert("Reminder was deleted!");
+            window.location.reload();
+        }else{
+            alert("Reminder was NOT delelted.")
+        }
     }
     
     function clearLocalStorage() {
