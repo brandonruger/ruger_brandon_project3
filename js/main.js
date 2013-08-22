@@ -227,7 +227,7 @@ window.addEventListener("DOMContentLoaded", function(){
         var getPetType = getElements('pettype');
         
         //Reset Error Messages
-        //errorMsg.innerHTML = "";
+        errMsg.innerHTML = "";
         getPetName.style.border = "1px solid black";
         getPetAge.style.border = "1px solid black";
         getPetType.style.border = "1px solid black";
@@ -272,9 +272,10 @@ window.addEventListener("DOMContentLoaded", function(){
             for (var i=0, j=errorMessagesArray.length; i<j; i++) {
                 var txt = document.createElement('li');
                 txt.innerHTML = errorMessagesArray[i];
-                errorMsg.appendChild(txt);
+                errMsg.appendChild(txt);
 ;            }
-            ventData.preventDefault();
+
+            eventData.preventDefault();
             return false;
         } else{
             //If all is OK, save our data!
@@ -291,7 +292,7 @@ window.addEventListener("DOMContentLoaded", function(){
     var fleaValue;
     var heartwormValue;
     var otherValue;
-    var errorMsg = getElements('errorMessages');
+    var errMsg = getElements('errors');
     makeFleaMedOptions();
     
     //Set Link & Submit Click Events
